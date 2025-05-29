@@ -15,6 +15,7 @@ public:
         ENCRYPT,
         DECRYPT,
         CHECKSUM,
+        UNKNOWN
     };
 
     void Parse(int argc, char *argv[]);
@@ -24,8 +25,10 @@ public:
     std::string GetOutputFile() const { return outputFile_; }
     std::string GetPassword() const { return password_; }
 
+    bool IsValid() const { return ValidateOptions(); }
+
 private:
-    COMMAND_TYPE command_;
+    COMMAND_TYPE command_ = COMMAND_TYPE::UNKNOWN;
     const std::unordered_map<std::string_view, COMMAND_TYPE> commandMapping_ = {
         {"encrypt", ProgramOptions::COMMAND_TYPE::ENCRYPT},
         {"decrypt", ProgramOptions::COMMAND_TYPE::DECRYPT},
@@ -37,6 +40,10 @@ private:
     std::string password_;
 
     boost::program_options::options_description desc_;
+
+    bool ValidateOptions() const;
+    void CheckInputOutputPassword() const;
+    void CheckInputFile() const;
 };
 
 }  // namespace CryptoGuard
